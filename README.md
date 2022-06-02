@@ -1,6 +1,6 @@
 # smal.ly
 
-A simple url shortener written in go+redis using echo. 
+A simple url shortener written in go+redis using [echo](https://echo.labstack.com/guide/). 
 
 ## Usage
 
