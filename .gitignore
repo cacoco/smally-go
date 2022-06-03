@@ -5,3 +5,7 @@
 classes/
 target/
 .vscode/
+coverage.txt
+_test
+vendor
+*.out

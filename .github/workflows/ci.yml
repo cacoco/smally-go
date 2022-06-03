@@ -1,0 +1,44 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.go'
+      - 'go.*'
+      - '_fixture/**'
+      - '.github/**'
+      - 'codecov.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.go'
+      - 'go.*'
+      - '_fixture/**'
+      - '.github/**'
+      - 'codecov.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        # Each major Go release is supported until there are two newer major releases. https://golang.org/doc/devel/release.html#policy
+        go: [1.16, 1.17, 1.18]
+    name: ${{ matrix.os }} @ Go ${{ matrix.go }}
+    runs-on: ${{ matrix.os }}
+    steps:
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+        run: go install golang.org/x/lint/golint@latest
+      - name: Lint and Run tests
+        run: |
+          golint -set_exit_status ./...
+          go test -race --coverprofile=coverage.coverprofile --covermode=atomic ./...
