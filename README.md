@@ -7,6 +7,6 @@ A simple url shortener written in go+redis using [echo](https://echo.labstack.co
 You can run this using `go run`:
 
 ```
-go run cmd/smally-go/main.go
+go run cmd/server/main.go
 ```
 
