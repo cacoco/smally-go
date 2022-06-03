@@ -1,4 +1,5 @@
 # smal.ly
+[![Run Tests](https://github.com/cacoco/smally-go/actions/workflows/ci.yml/badge.svg)](https://github.com/cacoco/smally-go/actions/workflows/ci.yml)
 
 A simple url shortener written in go+redis using [echo](https://echo.labstack.com/guide/). 
 
