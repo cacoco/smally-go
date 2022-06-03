@@ -42,7 +42,7 @@ func TestCreateSmallyURL(t *testing.T) {
 
 	h := &handler{db}
 	// Assertions
-	if assert.NoError(t, h.createSmallyUrl(c)) {
+	if assert.NoError(t, h.createSmallyURL(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
 		assert.Equal(t, postURLResponseJSON, rec.Body.String())
 	}
@@ -66,7 +66,7 @@ func TestGetSmallyURL(t *testing.T) {
 
 	h := &handler{db}
 	// Assertions
-	if assert.NoError(t, h.getSmallyUrl(c)) {
+	if assert.NoError(t, h.getSmallyURL(c)) {
 		assert.Equal(t, http.StatusMovedPermanently, rec.Code)
 		assert.Equal(t, longURL, rec.HeaderMap.Get("Location"))
 	}

@@ -4,6 +4,12 @@ A simple url shortener written in go+redis using [echo](https://echo.labstack.co
 
 ## Usage
 
+To test:
+
+```
+go test ./...
+```
+
 You can run this using `go run`:
 
 ```
