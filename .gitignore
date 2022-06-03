@@ -4,3 +4,4 @@
 *.ipr
 classes/
 target/
+.vscode/
