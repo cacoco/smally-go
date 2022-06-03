@@ -16,12 +16,12 @@ const urlKeyPrefix string = "url-"
 const encodingRadix = 32
 
 type (
-	postUrlRequest struct {
-		Url string `json:"url"`
+	postURLRequest struct {
+		URL string `json:"url"`
 	}
 
-	postUrlResponse struct {
-		SmallyUrl string `json:"smally_url"`
+	postURLResponse struct {
+		SmallyURL string `json:"smally_url"`
 	}
 
 	// for testing
@@ -30,8 +30,8 @@ type (
 	}
 )
 
-func newPostUrlResponse(url string) *postUrlResponse {
-	p := postUrlResponse{SmallyUrl: url}
+func newPostURLResponse(url string) *postURLResponse {
+	p := postURLResponse{SmallyURL: url}
 	return &p
 }
 
@@ -46,70 +46,71 @@ var redisClient *redis.Client = redis.NewClient(&redis.Options{
 // Handlers
 //----------
 
+// Create - POST /url Handler
 func Create(c echo.Context) error {
 	h := &handler{redisClient}
-	return h.createSmallyUrl(c)
+	return h.createSmallyURL(c)
 }
 
-func (h *handler) createSmallyUrl(c echo.Context) error {
-	p := new(postUrlRequest)
+func (h *handler) createSmallyURL(c echo.Context) error {
+	p := new(postURLRequest)
 	if err := c.Bind(p); err != nil {
 		return err
 	}
 
-	fmt.Printf("Creating shortened url for %s\n", p.Url)
+	fmt.Printf("Creating shortened url for %s\n", p.URL)
 
 	next := h.nextCounter()
-	redisUrlKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", next))
-	err := h.rdb.Set(redisCtx, redisUrlKey, p.Url, 0).Err()
+	redisURLKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", next))
+	err := h.rdb.Set(redisCtx, redisURLKey, p.URL, 0).Err()
 	if err != nil {
 		return err
 	}
 
 	id := strconv.FormatInt(next, encodingRadix)
-	smallyUrl := fmt.Sprintf("%s://%s/%s", c.Scheme(), c.Request().Host, id)
+	smallyURL := fmt.Sprintf("%s://%s/%s", c.Scheme(), c.Request().Host, id)
 
-	return c.JSON(http.StatusCreated, newPostUrlResponse(smallyUrl))
+	return c.JSON(http.StatusCreated, newPostURLResponse(smallyURL))
 }
 
+// Get - GET /:id Handler
 func Get(c echo.Context) error {
 	h := &handler{redisClient}
-	return h.getSmallyUrl(c)
+	return h.getSmallyURL(c)
 }
 
-func (h *handler) getSmallyUrl(c echo.Context) error {
+func (h *handler) getSmallyURL(c echo.Context) error {
 	id := c.Param("id")
 
 	fmt.Printf("Decoding url for shortened id %s\n", id)
 
-	decodedId, err := strconv.ParseInt(id, encodingRadix, 64)
+	decodedID, err := strconv.ParseInt(id, encodingRadix, 64)
 	if err != nil {
 		return err
 	}
-	redisUrlKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", decodedId))
+	redisURLKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", decodedID))
 
-	url, err := h.rdb.Get(redisCtx, redisUrlKey).Result()
+	url, err := h.rdb.Get(redisCtx, redisURLKey).Result()
 	if err != nil {
 		fmt.Printf("No matching url or encountered an error looking up matching url. %s\n", err.Error())
 		return err
-	} else {
-		fmt.Printf("Found matching url: %s for id: %s\n", url, id)
-		return c.Redirect(http.StatusMovedPermanently, url)
 	}
+	fmt.Printf("Found matching url: %s for id: %s\n", url, id)
+	return c.Redirect(http.StatusMovedPermanently, url)
 }
 
 //----------
 // Services
 //----------
 
-func (h *handler) getShortUrl(id string) string {
-	decodedId, err := strconv.ParseInt(id, encodingRadix, 64)
+func (h *handler) getShortURL(id string) string {
+	decodedID, err := strconv.ParseInt(id, encodingRadix, 64)
 	if err != nil {
 		panic(err)
 	}
-	redisUrlKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", decodedId))
+	redisURLKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", decodedID))
 
-	url, err := h.rdb.Get(redisCtx, redisUrlKey).Result()
+	url, err := h.rdb.Get(redisCtx, redisURLKey).Result()
 	if err != nil {
 		panic(err)
 	} else {

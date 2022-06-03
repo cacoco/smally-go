@@ -12,21 +12,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const longUrl = "https://www.nytimes.com/2022/06/01/well/eat/coffee-study-lower-dying-risk.html"
-const smallUrl = "http://example.com/9h5k0"
+const longURL = "https://www.nytimes.com/2022/06/01/well/eat/coffee-study-lower-dying-risk.html"
+const smallURL = "http://example.com/9h5k0"
 
 var (
-	postUrlRequestJSON  = `{"url":"https://www.nytimes.com/2022/06/01/well/eat/coffee-study-lower-dying-risk.html"}\n`
-	postUrlResponseJSON = fmt.Sprintf(`{"smally_url":"%s"}
-`, smallUrl)
+	postURLRequestJSON  = `{"url":"https://www.nytimes.com/2022/06/01/well/eat/coffee-study-lower-dying-risk.html"}\n`
+	postURLResponseJSON = fmt.Sprintf(`{"smally_url":"%s"}
+`, smallURL)
 )
 
-func TestCreateSmallyUrl(t *testing.T) {
+func TestCreateSmallyURL(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 
 	// Setup
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodPost, "/url", strings.NewReader(postUrlRequestJSON))
+	req := httptest.NewRequest(http.MethodPost, "/url", strings.NewReader(postURLRequestJSON))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -36,19 +36,19 @@ func TestCreateSmallyUrl(t *testing.T) {
 	next := 10000001
 	//.Set(redisCtx, counterKey, next, 0).Err()
 	mock.ExpectSet(counterKey, fmt.Sprintf("%d", next), 0).SetVal(fmt.Sprintf("%d", next))
-	//.Set(redisCtx, redisUrlKey, p.Url, 0).Err()
-	redisUrlKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", initialValue))
-	mock.ExpectSet(redisUrlKey, longUrl, 0).SetVal(longUrl)
+	//.Set(redisCtx, redisURLKey, p.Url, 0).Err()
+	redisURLKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", initialValue))
+	mock.ExpectSet(redisURLKey, longURL, 0).SetVal(longURL)
 
 	h := &handler{db}
 	// Assertions
 	if assert.NoError(t, h.createSmallyUrl(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
-		assert.Equal(t, postUrlResponseJSON, rec.Body.String())
+		assert.Equal(t, postURLResponseJSON, rec.Body.String())
 	}
 }
 
-func TestGetSmallyUrl(t *testing.T) {
+func TestGetSmallyURL(t *testing.T) {
 	db, mock := redismock.NewClientMock()
 
 	// Setup
@@ -60,14 +60,14 @@ func TestGetSmallyUrl(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("9h5k0")
 
-	redisUrlKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", initialValue))
+	redisURLKey := fmt.Sprintf("%s%s", urlKeyPrefix, fmt.Sprintf("%d", initialValue))
 	//.Get(redisCtx, redisUrlKey).Result()
-	mock.ExpectGet(redisUrlKey).SetVal(longUrl)
+	mock.ExpectGet(redisURLKey).SetVal(longURL)
 
 	h := &handler{db}
 	// Assertions
 	if assert.NoError(t, h.getSmallyUrl(c)) {
 		assert.Equal(t, http.StatusMovedPermanently, rec.Code)
-		assert.Equal(t, longUrl, rec.HeaderMap.Get("Location"))
+		assert.Equal(t, longURL, rec.HeaderMap.Get("Location"))
 	}
 }
