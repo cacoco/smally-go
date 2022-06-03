@@ -6,6 +6,7 @@ classes/
 target/
 .vscode/
 coverage.txt
+coverage.coverprofile
 _test
 vendor
 *.out
