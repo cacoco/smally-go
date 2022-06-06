@@ -10,9 +10,7 @@ import (
 )
 
 var (
-	httpPort  = flag.String("http.port", ":8080", "Default HTTP port")
-	redisHost = flag.String("redis.host", "localhost", "Default redis port")
-	redisPort = flag.Int("redis.port", 6379, "Default redis port")
+	httpPort = flag.String("http.port", ":8080", "Default HTTP port")
 )
 
 func main() {

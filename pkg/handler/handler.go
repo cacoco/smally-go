@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -14,6 +15,13 @@ const initialValue int64 = 10000000
 const counterKey string = "smally:counter"
 const urlKeyPrefix string = "url-"
 const encodingRadix = 32
+
+var (
+	redisHost     = flag.String("redis.host", "localhost", "Default redis port")
+	redisPort     = flag.Int("redis.port", 6379, "Default redis port")
+	redisPassword = flag.String("redis.password", "", "Default redis password")
+	redisDB       = flag.Int("redis.db", 0, "Default redis database")
+)
 
 type (
 	postURLRequest struct {
@@ -37,9 +45,9 @@ func newPostURLResponse(url string) *postURLResponse {
 
 var redisCtx = context.Background()
 var redisClient *redis.Client = redis.NewClient(&redis.Options{
-	Addr:     "localhost:6379",
-	Password: "", // no password set
-	DB:       0,  // use default DB
+	Addr:     fmt.Sprintf("%s:%d", *redisHost, *redisPort),
+	Password: *redisPassword,
+	DB:       *redisDB,
 })
 
 //----------

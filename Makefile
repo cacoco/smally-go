@@ -18,4 +18,4 @@ test-unit:
 
 run-local:
 	go build -v -o bin/smally-go ./...
-	./bin/smally-go/server -http.port=:8080 -redis.host=localhost -redis.port=6379
+	./bin/smally-go/server -http.port=":8080" -redis.host="localhost" -redis.port="6379"
