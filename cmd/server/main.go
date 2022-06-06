@@ -1,13 +1,23 @@
 package main
 
 import (
+	"flag"
+
 	h "github.com/cacoco/smally-go/pkg/handler"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
+var (
+	httpPort  = flag.String("http.port", ":8080", "Default HTTP port")
+	redisHost = flag.String("redis.host", "localhost", "Default redis port")
+	redisPort = flag.Int("redis.port", 6379, "Default redis port")
+)
+
 func main() {
+	flag.Parse()
+
 	e := echo.New()
 
 	// Middleware
@@ -19,5 +29,5 @@ func main() {
 	e.GET("/:id", h.Get)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(*httpPort))
 }

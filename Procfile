@@ -1,0 +1,1 @@
+web: bin/smally-go/server -http.port=:$PORT -redis.host=$REDIS_HOST -redis.port=$REDIS_PORT

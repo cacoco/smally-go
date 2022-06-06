@@ -14,9 +14,9 @@ import (
 
 const longURL = "https://www.nytimes.com/2022/06/01/well/eat/coffee-study-lower-dying-risk.html"
 const smallURL = "http://example.com/9h5k0"
+const postURLRequestJSON = `{"url":"https://www.nytimes.com/2022/06/01/well/eat/coffee-study-lower-dying-risk.html"}\n`
 
 var (
-	postURLRequestJSON  = `{"url":"https://www.nytimes.com/2022/06/01/well/eat/coffee-study-lower-dying-risk.html"}\n`
 	postURLResponseJSON = fmt.Sprintf(`{"smally_url":"%s"}
 `, smallURL)
 )
